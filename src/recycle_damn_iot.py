@@ -9,13 +9,16 @@ CAPTURING = False
 CLASSIFYING = False
 fullname = ""
 
-# Load Lobe TF model
-#model = ImageModel.load('/home/pi/recycle_damn_iot/lobe/model')
+# Lobe TF Lite model working
+model = ImageModel.load('/home/pi/recycle_damn_iot/trained_models/TFLite')
+# Lobe Tensor Flow model not working
+#model = ImageModel.load('/home/pi/recycle_damn_iot/trained_models/TensorFlow')
 
 def capture(path):
-    global fullname
+    global fullname, CAPTURING
     camera = PiCamera()
     try:
+        print("Capturing image...")
         CAPTURING = True
         camera.rotation=180
         #camera.resolution = (2592, 1944)
@@ -33,8 +36,11 @@ def capture(path):
         camera.close()
         CAPTURING = False
 
-def identify(label):
-    print(label)
+
+def identify(label, percentage):
+    global CLASSIFYING
+    print("This item is: " + label + "(" + percentage + "%)")
+    CLASSIFYING = False
     if label == "trash":
         print("This goes in the waste bin")
         sleep(5)
@@ -55,19 +61,38 @@ def identify(label):
         sleep(5)
     else:
         print("Unknown, please research where to dispose of this item correctly")
-    CLASSIFYING = False
+
+
+def parse_result(result):
+    # {"Labels": [["paper", 1.0], ["metal", 9.21433623846113e-11], ["glass", 9.720557556580287e-14], ["cardboard", 7.98967757730494e-14], ["plastic", 4.54364270071673e-15], ["trash", 2.5402109394759417e-15]], "Prediction": "paper"}
+    # print(result.prediction)
+    percentage = 0
+    for item in result.labels:
+        print(item)
+        if item[0] == result.prediction:
+            value = item[1]
+            percentage = value/1*100
+            percentage = str("{:.2f}".format(percentage))
+    return percentage
+
 
 def main(path):
-    CLASSIFYING = False
-    CAPTURING = False
+    global CLASSIFYING
+    global CAPTURING
     while True:
-    	if (not CAPTURING and not CLASSIFYING):
-#        CLASSIFYING = True
-        	capture(path)
-#        result = model.predict_from_file(fullname)
-#        identify(result.prediction)
-    	else:
-        	print("Please wait a moment and try again")
+        if (not CAPTURING and not CLASSIFYING):
+            CLASSIFYING = True
+            capture(path)
+            print("Predicting...")
+            result = model.predict_from_file(fullname)
+            percentage = parse_result(result)
+            identify(result.prediction, percentage)
+        else:
+            print("Please wait a moment and try again")
+            if CLASSIFYING:
+                print("The image is currently being classified")
+            if CAPTURING:
+                print("The image is currently being captured")
 
 
 if __name__ == "__main__":
