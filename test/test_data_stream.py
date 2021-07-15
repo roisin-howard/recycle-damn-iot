@@ -10,7 +10,7 @@ import random
 # # Warehouse schema variables
 project_id = "hackathon-recycler-damn-iot"
 dataset_name = "recycler_dataset"
-table_name = "predictions"
+table_name = "predictions_raw"
 schema_def = []
 test_predictions = ['paper', 'plastic', 'glass']
 
