@@ -10,7 +10,7 @@ CLASSIFYING = False
 fullname = ""
 
 # Lobe TF Lite model working
-model = ImageModel.load('/home/pi/recycle_damn_iot/trained_models/TFLite')
+model = ImageModel.load('/home/pi/recycle_damn_iot/trained_models/TFLite/model1')
 # Lobe Tensor Flow model not working
 #model = ImageModel.load('/home/pi/recycle_damn_iot/trained_models/TensorFlow')
 
@@ -98,4 +98,3 @@ def main(path):
 if __name__ == "__main__":
     print("Beginning waste classification...")
     main("/home/pi/recycle_damn_iot/images/")
-               
