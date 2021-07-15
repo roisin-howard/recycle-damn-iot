@@ -31,4 +31,6 @@ Once the system has access you can perform the following operations using the Bi
 * Init BigQuery Schema - Creates the dataset and table within the specified project ID if they don't exist
 * Stream Data - Will stream a single row to the table in BigQuery. Prediction data must be populated into the Prediction model and sent to this method where it will be serialised and sent. The method will return True if successful and False if any errors occur. Inspection of the console will provide further detail of any errors.
 
+Implementation examples can be found within ``test_data_stream.py``
+
 
