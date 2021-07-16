@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../')
+
 from data_stream.BigQueryClient import BigQueryClient
 from models.prediction import Prediction
 from uuid import uuid4
