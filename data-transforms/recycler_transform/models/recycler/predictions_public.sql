@@ -5,4 +5,4 @@ SELECT
     pred_label as prediction,
     pred_accuracy as accuracy,
     pred_datetime as predicted_on
-FROM `hackathon-recycler-damn-iot`.recycler_dataset.predictions_raw
+FROM {{ source('recycler_dataset', 'predictions_raw')}}
