@@ -1,0 +1,10 @@
+battery
+brown-glass
+cardboard
+compost
+green-glass
+metal
+paper
+plastic
+trash
+white-glass
