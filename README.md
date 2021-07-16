@@ -33,4 +33,10 @@ Once the system has access you can perform the following operations using the Bi
 
 Implementation examples can be found within ``test_data_stream.py``
 
+# Test Locally on Pi
+cd to recycle_damn_iot directory
+``python3 test/test_mode.py``
 
+or pass in 1 argument with the image path you wish to classify for model 1
+
+or pass in 2 arguments, first the image path and second "model2" if you wish to use the newer model
