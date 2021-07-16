@@ -9,10 +9,10 @@ CAPTURING = False
 CLASSIFYING = False
 fullname = ""
 
-# Lobe TF Lite model working
-model = ImageModel.load('/home/pi/recycle_damn_iot/trained_models/TFLite/model1')
-# Lobe Tensor Flow model not working
-#model = ImageModel.load('/home/pi/recycle_damn_iot/trained_models/TensorFlow')
+# Lobe TF Lite model 1 (~2.5k images) 
+#model = ImageModel.load('./trained_models/TFLite/model1')
+# Lobe TF Lite model 2 (10k+ images) 
+model = ImageModel.load('./trained_models/TFLite/model2')
 
 def capture(path):
     global fullname, CAPTURING
@@ -44,6 +44,9 @@ def identify(label, percentage):
     if label == "trash":
         print("This goes in the waste bin")
         sleep(5)
+    if label == "battery":
+        print("This can be brought to a battery recycline centre")
+        sleep(5)
     if label == "paper":
         print("This goes in the recycling bin")
         sleep(5)
@@ -53,22 +56,30 @@ def identify(label, percentage):
     if label == "cardboard":
         print("This goes in the recycling bin") 
         sleep(5)
-    if label == "glass":
+    if label == "brown-glass":
+        print("This can be brought to the bottle bank") 
+        sleep(5)
+    if label == "white-glass":
+        print("This can be brought to the bottle bank") 
+        sleep(5)
+    if label == "green-glass":
         print("This can be brought to the bottle bank") 
         sleep(5)
     if label == "metal":
         print("This can be brought to a metal recycling centre") 
         sleep(5)
+    if label == "compost":
+        print("This can be put in the compost bin") 
+        sleep(5)
     else:
         print("Unknown, please research where to dispose of this item correctly")
 
 
-def parse_result(result):
+def calculate_accuracy(result):
     # {"Labels": [["paper", 1.0], ["metal", 9.21433623846113e-11], ["glass", 9.720557556580287e-14], ["cardboard", 7.98967757730494e-14], ["plastic", 4.54364270071673e-15], ["trash", 2.5402109394759417e-15]], "Prediction": "paper"}
     # print(result.prediction)
     percentage = 0
     for item in result.labels:
-        print(item)
         if item[0] == result.prediction:
             value = item[1]
             percentage = value/1*100
@@ -85,8 +96,8 @@ def main(path):
             capture(path)
             print("Predicting...")
             result = model.predict_from_file(fullname)
-            percentage = parse_result(result)
-            identify(result.prediction, percentage)
+            accuracy = calculate_accuracy(result)
+            identify(result.prediction, accuracy)
         else:
             print("Please wait a moment and try again")
             if CLASSIFYING:
