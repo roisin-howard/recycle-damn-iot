@@ -104,23 +104,26 @@ def rename_image(path, label):
 def main(path):
     global CLASSIFYING
     global CAPTURING
-    while True:
-        if (not CAPTURING and not CLASSIFYING):
-            CLASSIFYING = True
-            capture(path)
-            print("Predicting...")
-            result = model.predict_from_file(fullname)
-            accuracy = calculate_accuracy(result)
-            send_result(result.prediction, accuracy)
-            identify(result.prediction, accuracy)
-            new_filename = rename_image(fullname, result.prediction)
-            print(f'Renaming image to: {new_filename}')
-        else:
-            print("Please wait a moment and try again")
-            if CLASSIFYING:
-                print("The image is currently being classified")
-            if CAPTURING:
-                print("The image is currently being captured")
+    try:
+        while True:
+            if (not CAPTURING and not CLASSIFYING):
+                CLASSIFYING = True
+                capture(path)
+                print("Predicting...")
+                result = model.predict_from_file(fullname)
+                accuracy = calculate_accuracy(result)
+                send_result(result.prediction, accuracy)
+                identify(result.prediction, accuracy)
+                new_filename = rename_image(fullname, result.prediction)
+                print(f'Renaming image to: {new_filename}')
+            else:
+                print("Please wait a moment and try again")
+                if CLASSIFYING:
+                    print("The image is currently being classified")
+                if CAPTURING:
+                    print("The image is currently being captured")
+    except KeyboardInterrupt:
+        pass
 
 
 if __name__ == "__main__":
