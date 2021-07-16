@@ -138,4 +138,5 @@ dmypy.json
 cython_debug/
 
 # Folders to ignore from the solution
+images
 env

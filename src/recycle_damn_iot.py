@@ -9,10 +9,10 @@ CAPTURING = False
 CLASSIFYING = False
 fullname = ""
 
-# Lobe TF Lite model working
-model = ImageModel.load('/home/pi/recycle_damn_iot/trained_models/TFLite')
-# Lobe Tensor Flow model not working
-#model = ImageModel.load('/home/pi/recycle_damn_iot/trained_models/TensorFlow')
+# Lobe TF Lite model 1 (~2.5k images) 
+#model = ImageModel.load('./trained_models/TFLite/model1')
+# Lobe TF Lite model 2 (10k+ images) 
+model = ImageModel.load('./trained_models/TFLite/model2')
 
 def capture(path):
     global fullname, CAPTURING
@@ -39,42 +39,50 @@ def capture(path):
 
 def identify(label, percentage):
     global CLASSIFYING
-    print("This item is: " + label + "(" + percentage + "%)")
+    print("This item is: " + label + " (" + percentage + "%)")
     CLASSIFYING = False
     if label == "trash":
         print("This goes in the waste bin")
-        sleep(5)
-    if label == "paper":
+    elif label == "battery":
+        print("This can be brought to a battery recycling centre")
+    elif label == "paper":
         print("This goes in the recycling bin")
-        sleep(5)
-    if label == "plastic":
+    elif label == "plastic":
         print("This goes in the recycling bin")
-        sleep(5)
-    if label == "cardboard":
+    elif label == "cardboard":
         print("This goes in the recycling bin") 
-        sleep(5)
-    if label == "glass":
+    elif label == "brown-glass":
         print("This can be brought to the bottle bank") 
-        sleep(5)
-    if label == "metal":
+    elif label == "white-glass":
+        print("This can be brought to the bottle bank") 
+    elif label == "green-glass":
+        print("This can be brought to the bottle bank") 
+    elif label == "metal":
         print("This can be brought to a metal recycling centre") 
-        sleep(5)
+    elif label == "compost":
+        print("This can be put in the compost bin") 
     else:
         print("Unknown, please research where to dispose of this item correctly")
 
 
-def parse_result(result):
+def calculate_accuracy(result):
     # {"Labels": [["paper", 1.0], ["metal", 9.21433623846113e-11], ["glass", 9.720557556580287e-14], ["cardboard", 7.98967757730494e-14], ["plastic", 4.54364270071673e-15], ["trash", 2.5402109394759417e-15]], "Prediction": "paper"}
     # print(result.prediction)
     percentage = 0
     for item in result.labels:
-        print(item)
         if item[0] == result.prediction:
             value = item[1]
             percentage = value/1*100
             percentage = str("{:.2f}".format(percentage))
     return percentage
 
+
+def rename_image(path, label):
+    file_name = os.path.basename(path)
+    dir_name = os.path.dirname(path)
+    new_name = dir_name + "/" + label + "-" + file_name
+    result = os.rename(path, new_name)
+    return new_name
 
 def main(path):
     global CLASSIFYING
@@ -85,8 +93,10 @@ def main(path):
             capture(path)
             print("Predicting...")
             result = model.predict_from_file(fullname)
-            percentage = parse_result(result)
-            identify(result.prediction, percentage)
+            accuracy = calculate_accuracy(result)
+            identify(result.prediction, accuracy)
+            new_filename = rename_image(fullname, result.prediction)
+            print(f'Renaming image to: {new_filename}')
         else:
             print("Please wait a moment and try again")
             if CLASSIFYING:
@@ -98,4 +108,3 @@ def main(path):
 if __name__ == "__main__":
     print("Beginning waste classification...")
     main("/home/pi/recycle_damn_iot/images/")
-               
