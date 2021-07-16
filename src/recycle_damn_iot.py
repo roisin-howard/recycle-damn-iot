@@ -39,38 +39,28 @@ def capture(path):
 
 def identify(label, percentage):
     global CLASSIFYING
-    print("This item is: " + label + "(" + percentage + "%)")
+    print("This item is: " + label + " (" + percentage + "%)")
     CLASSIFYING = False
     if label == "trash":
         print("This goes in the waste bin")
-        sleep(5)
     if label == "battery":
         print("This can be brought to a battery recycline centre")
-        sleep(5)
     if label == "paper":
         print("This goes in the recycling bin")
-        sleep(5)
     if label == "plastic":
         print("This goes in the recycling bin")
-        sleep(5)
     if label == "cardboard":
         print("This goes in the recycling bin") 
-        sleep(5)
     if label == "brown-glass":
         print("This can be brought to the bottle bank") 
-        sleep(5)
     if label == "white-glass":
         print("This can be brought to the bottle bank") 
-        sleep(5)
     if label == "green-glass":
         print("This can be brought to the bottle bank") 
-        sleep(5)
     if label == "metal":
         print("This can be brought to a metal recycling centre") 
-        sleep(5)
     if label == "compost":
         print("This can be put in the compost bin") 
-        sleep(5)
     else:
         print("Unknown, please research where to dispose of this item correctly")
 
@@ -87,6 +77,13 @@ def calculate_accuracy(result):
     return percentage
 
 
+def rename_image(path, label):
+    file_name = os.path.basename(path)
+    dir_name = os.path.dirname(path)
+    new_name = dir_name + "/" + label + "-" + file_name
+    result = os.rename(path, new_name)
+    return new_name
+
 def main(path):
     global CLASSIFYING
     global CAPTURING
@@ -98,6 +95,8 @@ def main(path):
             result = model.predict_from_file(fullname)
             accuracy = calculate_accuracy(result)
             identify(result.prediction, accuracy)
+            new_filename = rename_image(fullname, result.prediction)
+            print(f'Renaming image to: {new_filename}')
         else:
             print("Please wait a moment and try again")
             if CLASSIFYING:
