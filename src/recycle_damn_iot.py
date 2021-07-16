@@ -5,6 +5,10 @@ import sys
 import os
 from lobe import ImageModel
 
+from helpers import getserial
+from models.prediction import Prediction
+from data_stream.BigQueryClient import BigQueryClient
+
 CAPTURING = False
 CLASSIFYING = False
 fullname = ""
@@ -76,6 +80,19 @@ def calculate_accuracy(result):
             percentage = str("{:.2f}".format(percentage))
     return percentage
 
+def send_result(label, percentage):
+    bq = BigQueryClient()
+    timestamp = datetime.datetime.now()
+    
+    pred = Prediction()
+    pred.set_id(int(timestamp.timestamp()))
+    pred.set_device_id(getserial())
+    pred.set_prediction(label)
+    pred.set_accuracy(percentage)
+    pred.set_prediction_datetime(timestamp)
+    
+    bq.stream_data('hackathon-recycler-damn-iot', 'recycler_dataset', 'predictions_raw', pred)
+
 
 def rename_image(path, label):
     file_name = os.path.basename(path)
@@ -94,6 +111,7 @@ def main(path):
             print("Predicting...")
             result = model.predict_from_file(fullname)
             accuracy = calculate_accuracy(result)
+            send_result(result.prediction, accuracy)
             identify(result.prediction, accuracy)
             new_filename = rename_image(fullname, result.prediction)
             print(f'Renaming image to: {new_filename}')
@@ -107,4 +125,5 @@ def main(path):
 
 if __name__ == "__main__":
     print("Beginning waste classification...")
-    main("/home/pi/recycle_damn_iot/images/")
+    main("./images/")
+               
