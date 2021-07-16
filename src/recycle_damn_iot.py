@@ -43,23 +43,23 @@ def identify(label, percentage):
     CLASSIFYING = False
     if label == "trash":
         print("This goes in the waste bin")
-    if label == "battery":
-        print("This can be brought to a battery recycline centre")
-    if label == "paper":
+    elif label == "battery":
+        print("This can be brought to a battery recycling centre")
+    elif label == "paper":
         print("This goes in the recycling bin")
-    if label == "plastic":
+    elif label == "plastic":
         print("This goes in the recycling bin")
-    if label == "cardboard":
+    elif label == "cardboard":
         print("This goes in the recycling bin") 
-    if label == "brown-glass":
+    elif label == "brown-glass":
         print("This can be brought to the bottle bank") 
-    if label == "white-glass":
+    elif label == "white-glass":
         print("This can be brought to the bottle bank") 
-    if label == "green-glass":
+    elif label == "green-glass":
         print("This can be brought to the bottle bank") 
-    if label == "metal":
+    elif label == "metal":
         print("This can be brought to a metal recycling centre") 
-    if label == "compost":
+    elif label == "compost":
         print("This can be put in the compost bin") 
     else:
         print("Unknown, please research where to dispose of this item correctly")
