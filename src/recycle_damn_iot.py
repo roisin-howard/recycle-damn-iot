@@ -81,13 +81,14 @@ def parse_result(result):
 
 def send_result(label, percentage):
     bq = BigQueryClient()
+    timestamp = datetime.datetime.now()
     
     pred = Prediction()
-    pred.set_id(123)
+    pred.set_id(int(timestamp.timestamp()))
     pred.set_device_id(getserial())
     pred.set_prediction(label)
     pred.set_accuracy(percentage)
-    pred.set_prediction_datetime(datetime.datetime.now())
+    pred.set_prediction_datetime(timestamp)
     
     bq.stream_data('hackathon-recycler-damn-iot', 'recycler_dataset', 'predictions_raw', pred)
 
