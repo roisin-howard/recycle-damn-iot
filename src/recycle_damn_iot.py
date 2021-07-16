@@ -5,6 +5,9 @@ import sys
 import os
 from lobe import ImageModel
 
+from models.prediction import Prediction
+from data_stream.BigQueryClient import BigQueryClient
+
 CAPTURING = False
 CLASSIFYING = False
 fullname = ""
@@ -75,6 +78,18 @@ def parse_result(result):
             percentage = str("{:.2f}".format(percentage))
     return percentage
 
+def send_result(label, percentage):
+    bq = BigQueryClient()
+    
+    pred = Prediction()
+    pred.set_id(123)
+    pred.set_device_id("test_id")
+    pred.set_prediction(label)
+    pred.set_accuracy(percentage)
+    pred.set_prediction_datetime(datetime.datetime.now())
+    
+    bq.stream_data('hackathon-recycler-damn-iot', 'recycler_dataset', 'predictions_raw', pred)
+
 
 def main(path):
     global CLASSIFYING
@@ -86,6 +101,7 @@ def main(path):
             print("Predicting...")
             result = model.predict_from_file(fullname)
             percentage = parse_result(result)
+            send_result(result.prediction, percentage)
             identify(result.prediction, percentage)
         else:
             print("Please wait a moment and try again")
