@@ -5,6 +5,7 @@ import sys
 import os
 from lobe import ImageModel
 
+from helpers import getserial
 from models.prediction import Prediction
 from data_stream.BigQueryClient import BigQueryClient
 
@@ -83,7 +84,7 @@ def send_result(label, percentage):
     
     pred = Prediction()
     pred.set_id(123)
-    pred.set_device_id("test_id")
+    pred.set_device_id(getserial())
     pred.set_prediction(label)
     pred.set_accuracy(percentage)
     pred.set_prediction_datetime(datetime.datetime.now())
